@@ -34,6 +34,16 @@ abstract class AbstractConverter
      */
     private $namingStrategy;
 
+    /**
+     * @var string|null target php language version
+     */
+    private $targetPhpVersion;
+
+    /**
+     * @var bool target php version is support namespace or not
+     */
+    private $namespaceSupport = true;
+
     public abstract function convert(array $schemas);
 
     protected $typeAliases = array();
@@ -64,6 +74,21 @@ abstract class AbstractConverter
         if (isset($this->typeAliases[$schema->getTargetNamespace()][$type->getName()])) {
             return $this->aliasCache[$cid] = call_user_func($this->typeAliases[$schema->getTargetNamespace()][$type->getName()], $type);
         }
+    }
+
+    public function setTargetPhpVersion($targetPhpVersion)
+    {
+        $this->targetPhpVersion = $targetPhpVersion;
+        $this->namespaceSupport = !$this->targetPhpVersion || (version_compare($this->targetPhpVersion, '5.3') >= 0);
+    }
+
+    public function getTargetPhpVersion()
+    {
+        return $this->targetPhpVersion ?: null;
+    }
+
+    public function isNamespaceSupport() {
+        return $this->namespaceSupport;
     }
 
     public function __construct(NamingStrategy $namingStrategy)

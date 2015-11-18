@@ -60,7 +60,12 @@ abstract class AbstractConvert extends Console\Command\Command
             throw new \InvalidArgumentException("Unsupported naming strategy");
         }
 
+        $phpVer = $input->getOption('php-version') ?: null;
+
+        /** @var AbstractConverter $converter */
         $converter = $this->getConverterter($naming);
+
+        $converter->setTargetPhpVersion( $phpVer);
 
         $nsMapKeyed = array();
         $output->writeln("Namespaces:");
@@ -69,17 +74,24 @@ abstract class AbstractConvert extends Console\Command\Command
                 throw new Exception("Invalid syntax for --ns-map");
             }
             list ($xmlNs, $phpNs) = explode(";", $val, 2);
+            if (!$converter->isNamespaceSupport()) $phpNs = '/'; // root namespace on php < 5.3
             $nsMapKeyed[$xmlNs] = $phpNs;
             $converter->addNamespace($xmlNs, trim(strtr($phpNs, "./", "\\\\"), "\\"));
             $output->writeln("\tXML namepsace: <comment>$xmlNs</comment> => PHP namepsace: <info>$phpNs</info>");
         }
         $targets = array();
         $output->writeln("Target directories:");
+        if (!$converter->isNamespaceSupport() && count($nsTarget) > 1) {
+            throw new Exception("The specified php version does not supports namespaces therefore multiple target directory is not supported!");
+        }
         foreach ($nsTarget as $val) {
             if (substr_count($val, ';') !== 1) {
                 throw new Exception("Invalid syntax for --ns-dest");
             }
             list ($phpNs, $dir) = explode(";", $val, 2);
+
+            if (!$converter->isNamespaceSupport()) $phpNs = '/'; // root namespace on php < 5.3
+
             $phpNs = strtr($phpNs, "./", "\\\\");
 
             $targets[$phpNs] = $dir;

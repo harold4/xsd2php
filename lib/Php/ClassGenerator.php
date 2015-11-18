@@ -17,6 +17,30 @@ use Zend\Code\Generator\DocBlock\Tag\PropertyTag;
 class ClassGenerator
 {
 
+    private $targetPhpVersion;
+    private $namespaceSupport = true;
+
+    /**
+     * @return mixed
+     */
+    public function getTargetPhpVersion()
+    {
+        return $this->targetPhpVersion;
+    }
+
+    /**
+     * @param mixed $targetPhpVersion
+     */
+    public function setTargetPhpVersion($targetPhpVersion)
+    {
+        $this->targetPhpVersion = $targetPhpVersion;
+        $this->namespaceSupport = !$this->targetPhpVersion || (version_compare($this->targetPhpVersion, '5.3') >= 0);
+    }
+
+    public function isNamespaceSupport() {
+        return $this->namespaceSupport;
+    }
+
     private function handleBody(Generator\ClassGenerator $class, PHPClass $type)
     {
         foreach ($type->getProperties() as $prop) {
@@ -57,8 +81,10 @@ class ClassGenerator
             if ($this->isNativeType($class)) {
                 return $class->getName();
             }
+            if (!$this->isNamespaceSupport()) return $class->getName();
             return "\\" . $class->getName();
         }
+        if (!$this->isNamespaceSupport()) $class->getFullName();
         return "\\" . $class->getFullName();
     }
 
@@ -395,7 +421,9 @@ class ClassGenerator
         if ($type->getDoc()) {
             $docblock->setLongDescription($type->getDoc());
         }
-        $class->setNamespaceName($type->getNamespace() ?: NULL);
+        if ($this->isNamespaceSupport()) {
+            $class->setNamespaceName($type->getNamespace() ?: NULL);
+        }
         $class->setName($type->getName());
         $class->setDocblock($docblock);
 

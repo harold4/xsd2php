@@ -8,6 +8,7 @@ use Goetas\Xsd\XsdToPhp\AbstractConverter;
 use Symfony\Component\Console\Output\OutputInterface;
 use Zend\Code\Generator\FileGenerator;
 use Goetas\Xsd\XsdToPhp\Naming\NamingStrategy;
+use Symfony\Component\Console\Input\InputOption;
 
 class ConvertToPHP extends AbstractConvert
 {
@@ -19,6 +20,8 @@ class ConvertToPHP extends AbstractConvert
     protected function configure()
     {
         parent::configure();
+        $definition = $this->getDefinition();
+        $definition->addOption(new InputOption('php-version', null, InputOption::VALUE_OPTIONAL, 'Target PHP version number. Syntax: <info>php-major.php-minor</info>. Example: <info>5.2</info>'));
         $this->setName('convert:php');
         $this->setDescription('Convert XSD definitions into PHP classes');
     }
@@ -31,6 +34,7 @@ class ConvertToPHP extends AbstractConvert
     protected function convert(AbstractConverter $converter, array $schemas, array $targets, OutputInterface $output)
     {
         $generator = new ClassGenerator();
+        $generator->setTargetPhpVersion($converter->getTargetPhpVersion());
         $pathGenerator = new Psr4PathGenerator($targets);
         $progress = $this->getHelperSet()->get('progress');
 
