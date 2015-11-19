@@ -61,11 +61,13 @@ abstract class AbstractConvert extends Console\Command\Command
         }
 
         $phpVer = $input->hasOption('php-version') ? ($input->getOption('php-version') ?: null) : null;
+        $baseClass = $input->hasOption('base-class') ? ($input->getOption('base-class') ?: null) : null;
 
         /** @var AbstractConverter $converter */
         $converter = $this->getConverterter($naming);
 
         $converter->setTargetPhpVersion($phpVer);
+        $converter->setBaseClass($baseClass);
 
         $nsMapKeyed = array();
         $output->writeln("Namespaces:");

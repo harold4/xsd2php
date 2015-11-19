@@ -44,6 +44,11 @@ abstract class AbstractConverter
      */
     private $namespaceSupport = true;
 
+    /**
+     * @var string|null base class for generated classes
+     */
+    private $baseClass;
+
     public abstract function convert(array $schemas);
 
     protected $typeAliases = array();
@@ -90,6 +95,24 @@ abstract class AbstractConverter
     public function isNamespaceSupport() {
         return $this->namespaceSupport;
     }
+
+    /**
+     * @param string|null $baseClass
+     */
+    public function setBaseClass($baseClass)
+    {
+        if (!is_string($baseClass) && !is_null($baseClass)) throw new \Exception("invalid base class specified!");
+        $this->baseClass = $baseClass;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getBaseClass()
+    {
+        return $this->baseClass;
+    }
+
 
     public function __construct(NamingStrategy $namingStrategy)
     {

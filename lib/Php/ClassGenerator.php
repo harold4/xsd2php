@@ -19,6 +19,7 @@ class ClassGenerator
 
     private $targetPhpVersion;
     private $namespaceSupport = true;
+    private $baseClass;
 
     /**
      * @return mixed
@@ -39,6 +40,23 @@ class ClassGenerator
 
     public function isNamespaceSupport() {
         return $this->namespaceSupport;
+    }
+
+
+    /**
+     * @return string|null
+     */
+    public function getBaseClass()
+    {
+        return $this->baseClass;
+    }
+
+    /**
+     * @param string|null $baseClass
+     */
+    public function setBaseClass($baseClass)
+    {
+        $this->baseClass = $baseClass;
     }
 
     private function handleBody(Generator\ClassGenerator $class, PHPClass $type)
@@ -445,6 +463,11 @@ class ClassGenerator
                         $class->addUse($extends->getFullName());
                     }
                 }
+            }
+        } else {
+            $baseClass = $this->getBaseClass();
+            if ($baseClass) {
+                $class->setExtendedClass($baseClass);
             }
         }
 

@@ -22,6 +22,7 @@ class ConvertToPHP extends AbstractConvert
         parent::configure();
         $definition = $this->getDefinition();
         $definition->addOption(new InputOption('php-version', null, InputOption::VALUE_OPTIONAL, 'Target PHP version number. Syntax: <info>php-major.php-minor</info>. Example: <info>5.2</info>'));
+        $definition->addOption(new InputOption('base-class', null, InputOption::VALUE_OPTIONAL, 'Base class name for generated classes.'));
         $this->setName('convert:php');
         $this->setDescription('Convert XSD definitions into PHP classes');
     }
@@ -35,6 +36,7 @@ class ConvertToPHP extends AbstractConvert
     {
         $generator = new ClassGenerator();
         $generator->setTargetPhpVersion($converter->getTargetPhpVersion());
+        $generator->setBaseClass($converter->getBaseClass());
         $pathGenerator = new Psr4PathGenerator($targets);
         $progress = $this->getHelperSet()->get('progress');
 
