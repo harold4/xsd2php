@@ -60,12 +60,12 @@ abstract class AbstractConvert extends Console\Command\Command
             throw new \InvalidArgumentException("Unsupported naming strategy");
         }
 
-        $phpVer = $input->getOption('php-version') ?: null;
+        $phpVer = $input->hasOption('php-version') ? ($input->getOption('php-version') ?: null) : null;
 
         /** @var AbstractConverter $converter */
         $converter = $this->getConverterter($naming);
 
-        $converter->setTargetPhpVersion( $phpVer);
+        $converter->setTargetPhpVersion($phpVer);
 
         $nsMapKeyed = array();
         $output->writeln("Namespaces:");
