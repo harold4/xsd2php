@@ -1,6 +1,8 @@
 <?php
 namespace Goetas\Xsd\XsdToPhp\Php\Structure;
 
+use Zend\Code\Generator\DocBlock\Tag\TagInterface;
+
 class PHPArg
 {
 
@@ -11,6 +13,9 @@ class PHPArg
     protected $name;
 
     protected $default;
+
+    /** @var TagInterface[] */
+    protected $tags = array();
 
     public function __construct($name = null)
     {
@@ -63,4 +68,24 @@ class PHPArg
         $this->default = $default;
         return $this;
     }
+
+    /**
+     * @return TagInterface[]
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
+    /**
+     * @param TagInterface[] $tags
+     * @return $this
+     */
+    public function setTags($tags)
+    {
+        $this->tags = $tags;
+        return $this;
+    }
+
+
 }

@@ -22,6 +22,7 @@ use Goetas\XML\XSDReader\Schema\Element\ElementDef;
 use Goetas\XML\XSDReader\Schema\Element\ElementSingle;
 use Goetas\Xsd\XsdToPhp\AbstractConverter;
 use Goetas\Xsd\XsdToPhp\Naming\NamingStrategy;
+use Zend\Code\Generator\DocBlock\Tag\GenericTag;
 
 class PhpConverter extends AbstractConverter
 {
@@ -381,6 +382,16 @@ class PhpConverter extends AbstractConverter
         $property = new PHPProperty();
         $property->setName($this->getNamingStrategy()->getPropertyName($element));
         $property->setDoc($element->getDoc());
+        $tags = array(
+                new GenericTag('xmlname', $element->getName()),
+                new GenericTag('xmlmin', $element->getMin().' '), // fix empty bug in GenericTag
+                new GenericTag('xmlmax', ''.$element->getMax().' '), // fix empty bug in GenericTag
+                new GenericTag('xmlqualified', $element->isQualified() ? 'true' : 'false'),
+                new GenericTag('xmlnil', $element->isNil() ? 'true' : 'false'),
+                new GenericTag('xmltype', $element->getType()->getName()),
+                new GenericTag('xmltypenamespace', $element->getType()->getSchema()->getTargetNamespace()),
+        );
+        $property->setTags($tags);
 
         $t = $element->getType();
 

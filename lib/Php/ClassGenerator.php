@@ -408,6 +408,13 @@ class ClassGenerator
         if ($prop->getDoc()) {
             $docBlock->setLongDescription($prop->getDoc());
         }
+
+        if (($tags = $prop->getTags())) {
+            foreach ($tags as $tag) {
+                $docBlock->setTag($tag);
+            }
+        }
+
         $tag = new PropertyTag($prop->getName(), 'mixed');
 
         $type = $prop->getType();
