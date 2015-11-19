@@ -382,18 +382,24 @@ class PhpConverter extends AbstractConverter
         $property = new PHPProperty();
         $property->setName($this->getNamingStrategy()->getPropertyName($element));
         $property->setDoc($element->getDoc());
+
+        $t = $element->getType();
+
+        $min = $element->getMin();
+        $max = $element->getMax();
         $tags = array(
                 new GenericTag('xmlname', $element->getName()),
                 new GenericTag('xmlmin', $element->getMin().' '), // fix empty bug in GenericTag
-                new GenericTag('xmlmax', ''.$element->getMax().' '), // fix empty bug in GenericTag
+                new GenericTag('xmlmax', $max == -1 ? 'unbounded' : ''.$max.' '), // fix empty bug in GenericTag
+                new GenericTag('xmlarray', $max == -1 || ($max > $min && $min > 0)  ? 'true' : 'false'),
                 new GenericTag('xmlqualified', $element->isQualified() ? 'true' : 'false'),
                 new GenericTag('xmlnil', $element->isNil() ? 'true' : 'false'),
+                new GenericTag('xmlnamespace', $element->getSchema()->getTargetNamespace()),
                 new GenericTag('xmltype', $element->getType()->getName()),
                 new GenericTag('xmltypenamespace', $element->getType()->getSchema()->getTargetNamespace()),
+                new GenericTag('xmlsimpletype', $t instanceof SimpleType ? 'true' : 'false'),
         );
         $property->setTags($tags);
-
-        $t = $element->getType();
 
         if ($arrayize) {
             if ($itemOfArray = $this->isArrayType($t)) {

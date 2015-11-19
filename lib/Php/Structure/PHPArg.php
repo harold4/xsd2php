@@ -80,12 +80,22 @@ class PHPArg
     /**
      * @param TagInterface[] $tags
      * @return $this
+     * @throws \Exception
      */
     public function setTags($tags)
     {
+        if (!is_array($tags)) throw new \Exception("Invalid argument \$tags!");
         $this->tags = $tags;
         return $this;
     }
 
+    /**
+     * @param TagInterface $tag
+     * @return $this
+     */
+    public function addTag(TagInterface $tag) {
+        $this->tags[] = $tag;
+        return $this;
+    }
 
 }
